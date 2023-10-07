@@ -50,12 +50,12 @@ public class Terminal {
 			while(tabuleiro.reachedObjective() == false) {
 				System.out.println(tabuleiro);
 				
-				String digited = getDigitedValue("Digite o numero da LINHA e da COLUNA: x,y");
+				String digited = getDigitedValue("Digite o numero da LINHA e da COLUNA: x,y ");
 				Iterator<Integer> xy = Arrays.stream(digited.split(","))
 										.map(i -> Integer.parseInt(i.trim()))
 										.iterator();
 				
-				digited = getDigitedValue("Digite o numero 1 para abrir ou 2 para (des)marcar");
+				digited = getDigitedValue("Digite o numero 1 para abrir ou 2 para (des)marcar ");
 				if ("1".equals(digited)) {
 					tabuleiro.open(xy.next(), xy.next());
 				
