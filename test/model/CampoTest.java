@@ -52,31 +52,31 @@ public class CampoTest {
 	}
 	
 	@Test
-	void openFieldSafe_WhenAreFalseFlagAndFieldOpened_ThenReturnFieldSafeIsTrue() throws ExplosionException {
+	void openFieldSafe_WhenAreFalseFlagAndFieldOpened_ThenReturnFieldSafeIsTrue() {
 		Assertions.assertTrue(camp.open());
 	}
 	
 	@Test
-	void notOpenField_WhenFlagIsTrueInField_ThenReturnFalse() throws ExplosionException {
+	void notOpenField_WhenFlagIsTrueInField_ThenReturnFalse() {
 		camp.changeFlag();
 		Assertions.assertFalse(camp.open());
 	}
 	
 	@Test
-	void notOpenField_WhenAreTrueMinedFieldAndFlaggedField() throws ExplosionException {
+	void notOpenField_WhenAreTrueMinedFieldAndFlaggedField() {
 		camp.changeFlag();
 		camp.mine();
 		Assertions.assertTrue(camp.isMined());
 	}
 	
 	@Test
-	void minedField_WhenFieldHasNotFlag_ThenThrowsExplosionException() throws ExplosionException {
+	void minedField_WhenFieldHasNotFlag_ThenThrowsExplosionException() {
 		camp.mine();
 		Assertions.assertThrows(ExplosionException.class, () -> camp.open(), "Review the parameters and logic of class");
 	}
 	
 	@Test
-	void openFieldsSafeToTestRecursion_WhenThereAreNeighborSafe_ThenReturnTrue() throws ExplosionException {
+	void openFieldsSafeToTestRecursion_WhenThereAreNeighborSafe_ThenReturnTrue() {
 		Campo camp1_1 = new Campo(1, 1);
 		Campo camp2_2 = new Campo(2, 2);
 
@@ -85,11 +85,11 @@ public class CampoTest {
 		camp.addNeighbor(camp2_2); // adicionar vizinho no campo atual
 		camp.open(); // abrir campos para ver se abre o campo 1, 2 e o atual
 		
-		Assertions.assertTrue(camp2_2.isOpened() && camp1_1.isOpened());
+		Assertions.assertTrue(camp2_2.isOpened() == true && camp1_1.isOpened() == true);
 	}
 	
 	@Test
-	void notOpenFieldsUnsafeToTestRecursion_WhenThereAreNeighborUnsafe_ThenReturnFalse() throws ExplosionException {
+	void notOpenFieldsUnsafeToTestRecursion_WhenThereAreNeighborUnsafe_ThenReturnFalse() {
 		Campo camp1_1 = new Campo(1, 1);
 		Campo camp1_2 = new Campo(1, 2);
 		camp1_2.mine();

@@ -61,13 +61,7 @@ public class Campo {
 			opened = true; // abrir campo
 			
 			if (secureNeighborhood() == true) {
-				neighborList.forEach(i -> {
-											try {
-												i.open(); // recursão para abrir (opened = true) todos os campos da lista de campos seguros deste objeto atual (o field)
-											} catch (ExplosionException e) {
-												e.printStackTrace();
-											}
-										});
+				neighborList.forEach(i -> i.open()); // recursão para abrir (opened = true) todos os campos da lista de campos seguros deste objeto atual (o field));
 			}
 			return true;
 		} else {
@@ -79,7 +73,7 @@ public class Campo {
 		return neighborList.stream().noneMatch(i -> i.mined == true);
 	}
 	
-	public boolean blockField() { // bloquar campo aberto ou marcado E com bomba
+	public boolean objectiveReached() { // bloquar campo aberto ou marcado E com bomba
 		boolean discovered = opened == true && mined == false;
 		boolean markedAndHasBomb = flagged == true && mined == true;
 		
@@ -105,6 +99,9 @@ public class Campo {
 	public boolean isOpened() {
 		return opened;
 	}
+	protected void setOpened(boolean opened) {
+		this.opened = opened; 
+	}
 	public int getRow() {
 		return row;
 	}
@@ -113,16 +110,20 @@ public class Campo {
 	}
 	
 	public String toString() {
+		final String ANSI_RESET = "\u001B[0m"; 
+		final String ANSI_RED = "\u001b[43m"; 
+		final String ANSI_BLUE = "\u001B[46m"; 
+		
 		String result = "?";
 		
 		if(flagged == true) {
-			result = "X";
+			result = ANSI_RED + "X" + ANSI_RESET;
 			
 		} else if (opened == true && mined == true) {
 			result = "*";
 			
 		} else if (opened == true && numberOfMinesInNeighborhood() > 0) {
-			result = Long.toString(numberOfMinesInNeighborhood());
+			result = ANSI_BLUE + Long.toString(numberOfMinesInNeighborhood()) + ANSI_RESET;
 		
 		} else if (opened == true) {
 			result = " ";
