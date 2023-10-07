@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import exception.ExplosionException;
+
 public class Campo {
 	private final int row,
 					  column;
@@ -11,15 +13,15 @@ public class Campo {
 	private boolean flagged = false;
 	private boolean opened = false;
 	
-	private List<Campo> neighborList = new ArrayList<>();
+	private List<Campo> neighborList = new ArrayList<>(); // guardar vizinhos não minados deste field atual
 	
 	public Campo(int row, int column) {
 		this.row = row;
 		this.column = column;
 	}
 	
-	public boolean addNeighbor(Campo neighbor) {
-		boolean differentRow = row != neighbor.row;
+	public boolean addNeighbor(Campo neighbor) { // neighbor é um objeto (field) que tem atributos que descrevem se ele estã minado,
+		boolean differentRow = row != neighbor.row;    //  aberto ou com flag e em qual posição do tabuleiro ele está (row, column).
 		boolean differentColumn = column != neighbor.column;
 		boolean diagonal = differentRow && differentColumn;
 		
@@ -37,5 +39,95 @@ public class Campo {
 			result = true;
 		}
 		return result;
+	}
+	
+	public void changeFlag() {
+		if (opened == false) 
+			flagged = !flagged;
+	}
+	
+	public void mine() {
+		mined = true;
+	}
+	
+	public boolean open() throws ExplosionException {
+		
+		if (opened == false && flagged == false) { // happy path
+			
+			if (mined == true) { // game over
+				throw new ExplosionException(); // exemplo de uso de exception que não é um erro, mas um corner case (que no caso é game over)
+			}
+			
+			opened = true; // abrir campo
+			
+			if (secureNeighborhood() == true) {
+				neighborList.forEach(i -> {
+											try {
+												i.open(); // recursão para abrir (opened = true) todos os campos da lista de campos seguros deste objeto atual (o field)
+											} catch (ExplosionException e) {
+												e.printStackTrace();
+											}
+										});
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean secureNeighborhood() {
+		return neighborList.stream().noneMatch(i -> i.mined == true);
+	}
+	
+	public boolean blockField() { // bloquar campo aberto ou marcado E com bomba
+		boolean discovered = opened == true && mined == false;
+		boolean markedAndHasBomb = flagged == true && mined == true;
+		
+		return discovered || markedAndHasBomb;
+	}
+	
+	public long numberOfMinesInNeighborhood() {
+		return (short) neighborList.stream().filter(i -> i.isMined()).count(); // mostrar o número de minas na vizinhança
+	}
+	
+	public void restart() {
+		opened = false;
+		mined = false;
+		flagged = false;
+	}
+	
+	public boolean isFlagged() {
+		return flagged;
+	}
+	public boolean isMined() {
+		return mined;
+	}
+	public boolean isOpened() {
+		return opened;
+	}
+	public int getRow() {
+		return row;
+	}
+	public int getColumn() {
+		return column;
+	}
+	
+	public String toString() {
+		String result = "?";
+		
+		if(flagged == true) {
+			result = "X";
+			
+		} else if (opened == true && mined == true) {
+			result = "*";
+			
+		} else if (opened == true && numberOfMinesInNeighborhood() > 0) {
+			result = Long.toString(numberOfMinesInNeighborhood());
+		
+		} else if (opened == true) {
+			result = " ";
+		}
+		return result;
+		
 	}
 }
